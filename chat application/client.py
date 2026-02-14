@@ -1,0 +1,32 @@
+import socket
+import threading
+
+host = input("Enter server IP: ")
+port = 5555
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((host, port))
+
+name = input("Enter your name: ")
+
+def receive():
+    while True:
+        try:
+            message = client.recv(1024).decode()
+            print(message)
+        except:
+            print("Connection closed")
+            client.close()
+            break
+
+def send():
+    while True:
+        msg = input()
+        message = name + ": " + msg
+        client.send(message.encode())
+
+receive_thread = threading.Thread(target=receive)
+receive_thread.start()
+
+send_thread = threading.Thread(target=send)
+send_thread.start()
